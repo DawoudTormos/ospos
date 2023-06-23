@@ -195,7 +195,7 @@ if(isset($success))
 							}
 							?>
 
-							<td>
+							<td id="unit_price_<?php echo $item['item_number'] ?>">
 								<?php
 								if($items_module_allowed && $change_price/*permission to change price*/)
 								{
@@ -209,6 +209,17 @@ if(isset($success))
 								else
 								{
 									echo to_currency_LBP($item['price'] *$dollar_rate );
+
+									//to get title effect with dollar price
+									echo "<script>$('#unit_price_";
+									echo  $item['item_number'];
+									echo "').attr('title', '";
+									echo to_currency($item['price']);
+
+									echo "');</script>" ;
+
+
+
 								
 								/*$details = new ReflectionFunction('to_currency');
 								print $details->getFileName() . ':' . $details->getStartLine();
@@ -241,7 +252,7 @@ if(isset($success))
 								</div>
 							</td>
 
-							<td>
+							<td id="discounted_total_<?php echo $item['item_number'] ?>">
 								<?php
 								if($item['item_type'] == ITEM_AMOUNT_ENTRY)
 								{
@@ -249,7 +260,17 @@ if(isset($success))
 								}
 								else
 								{
+
+									echo to_currency_LBP($item['discounted_total'] * $dollar_rate);
+
+
+									//to get title effect with dollar price
+									echo "<script>$('#discounted_total_";
+									echo  $item['item_number'];
+									echo "').attr('title', '";
 									echo to_currency($item['discounted_total']);
+
+									echo "');</script>" ;
 								}
 								?>
 							</td>
@@ -335,6 +356,13 @@ if(isset($success))
 		</tbody>
 	</table>
 </div>
+
+
+
+
+
+
+
 
 
 
@@ -471,7 +499,15 @@ if(isset($success))
 			</tr>
 			<tr>
 				<th style="width: 55%;"><?php echo $this->lang->line('sales_sub_total'); ?></th>
-				<th style="width: 45%; text-align: right;"><?php echo to_currency($subtotal); ?></th>
+				<th id="sub_total" style="width: 45%; text-align: right;"><?php echo to_currency_LBP($subtotal * $dollar_rate); ?></th>
+<?php
+				//to get title effect with dollar price
+									echo "<script>$('#sub_total').attr('title', '";
+									echo to_currency($subtotal);
+
+									echo "');</script>" ;
+									?>
+
 			</tr>
 
 			<?php
@@ -480,7 +516,17 @@ if(isset($success))
 			?>
 				<tr>
 					<th style="width: 55%;"><?php echo (float)$tax['tax_rate'] . '% ' . $tax['tax_group']; ?></th>
-					<th style="width: 45%; text-align: right;"><?php echo to_currency_tax($tax['sale_tax_amount']); ?></th>
+					<th id="sale_tax_amount" style="width: 45%; text-align: right;"><?php echo to_currency_tax_LBP($tax['sale_tax_amount'] * $dollar_rate); ?></th>
+
+					<?php
+				//to get title effect with dollar price
+									echo "<script>$('#sale_tax_amount').attr('title', '";
+									echo to_currency_tax($tax['sale_tax_amount']);
+
+									echo "');</script>" ;
+									?>
+
+
 				</tr>
 			<?php
 			}
@@ -488,7 +534,16 @@ if(isset($success))
 
 			<tr>
 				<th style="width: 55%; font-size: 150%"><?php echo $this->lang->line('sales_total'); ?></th>
-				<th style="width: 45%; font-size: 150%; text-align: right;"><span id="sale_total"><?php echo to_currency($total); ?></span></th>
+				<th  style="width: 45%; font-size: 150%; text-align: right;"><span id="sale_total"><?php echo to_currency_LBP($total*$dollar_rate); ?></span></th>
+
+
+				<?php
+				//to get title effect with dollar price
+									echo "<script>$('#sale_total').attr('title', '";
+									echo to_currency($total);
+
+									echo "');</script>" ;
+									?>
 			</tr>
 		</table>
 
@@ -500,11 +555,28 @@ if(isset($success))
 			<table class="sales_table_100" id="payment_totals">
 				<tr>
 					<th style="width: 55%;"><?php echo $this->lang->line('sales_payments_total'); ?></th>
-					<th style="width: 45%; text-align: right;"><?php echo to_currency($payments_total); ?></th>
+					<th id="payments_total" style="width: 45%; text-align: right;"><?php echo to_currency_LBP($payments_total*$dollar_rate); ?></th>
+
+					<?php
+				//to get title effect with dollar price
+									echo "<script>$('#payments_total').attr('title', '";
+									echo to_currency($payments_total);
+
+									echo "');</script>" ;
+									?>
+				
 				</tr>
 				<tr>
 					<th style="width: 55%; font-size: 120%"><?php echo $this->lang->line('sales_amount_due'); ?></th>
-					<th style="width: 45%; font-size: 120%; text-align: right;"><span id="sale_amount_due"><?php echo to_currency($amount_due); ?></span></th>
+					<th style="width: 45%; font-size: 120%; text-align: right;"><span id="sale_amount_due"><?php echo to_currency_LBP($amount_due*$dollar_rate); ?></span></th>
+
+					<?php
+				//to get title effect with dollar price
+									echo "<script>$('#sale_amount_due').attr('title', '";
+									echo to_currency($amount_due);
+
+									echo "');</script>" ;
+									?>
 				</tr>
 			</table>
 
@@ -994,8 +1066,13 @@ function check_payment_type()
 
 	if($("#payment_types").val() == "<?php echo $this->lang->line('sales_giftcard'); ?>")
 	{
-		$("#sale_total").html("<?php echo to_currency($total); ?>");
-		$("#sale_amount_due").html("<?php echo to_currency($amount_due); ?>");
+		//edited
+		$("#sale_total").html("<?php echo to_currency_LBP($total*$dollar_rate); ?>");
+		$('#sale_total').attr('title', '  <?php echo to_currency($total);?>');
+		$("#sale_amount_due").html("<?php echo to_currency_LBP($amount_due*$dollar_rate); ?>");
+		$('#sale_amount_due').attr('title', '  <?php echo to_currency($amount_due);?>');
+		//
+
 		$("#amount_tendered_label").html("<?php echo $this->lang->line('sales_giftcard_number'); ?>");
 		$("#amount_tendered:enabled").val('').focus();
 		$(".giftcard-input").attr('disabled', false);
@@ -1004,8 +1081,13 @@ function check_payment_type()
 	}
 	else if(($("#payment_types").val() == "<?php echo $this->lang->line('sales_cash'); ?>" && cash_mode == '1'))
 	{
-		$("#sale_total").html("<?php echo to_currency($non_cash_total); ?>");
-		$("#sale_amount_due").html("<?php echo to_currency($cash_amount_due); ?>");
+		//edited
+		$("#sale_total").html("<?php echo to_currency_LBP($non_cash_total*$dollar_rate); ?>");
+		$('#sale_total').attr('title', '  <?php echo to_currency($non_cash_total);?>');
+		$("#sale_amount_due").html("<?php echo to_currency_LBP($cash_amount_due*$dollar_rate); ?>");
+		$('#sale_amount_due').attr('title', '  <?php echo to_currency($cash_amount_due);?>');
+
+	
 		$("#amount_tendered_label").html("<?php echo $this->lang->line('sales_amount_tendered'); ?>");
 		$("#amount_tendered:enabled").val("<?php echo to_currency_no_money($cash_amount_due); ?>");
 		$(".giftcard-input").attr('disabled', true);
@@ -1013,8 +1095,12 @@ function check_payment_type()
 	}
 	else
 	{
-		$("#sale_total").html("<?php echo to_currency($non_cash_total); ?>");
-		$("#sale_amount_due").html("<?php echo to_currency($amount_due); ?>");
+
+		$("#sale_total").html("<?php echo to_currency_LBP($non_cash_total*$dollar_rate); ?>");
+		$('#sale_total').attr('title', '  <?php echo to_currency($non_cash_total);?>');
+		$("#sale_amount_due").html("<?php echo to_currency_LBP($amount_due*$dollar_rate); ?>");
+		$('#sale_amount_due').attr('title', '  <?php echo to_currency($amount_due);?>');
+
 		$("#amount_tendered_label").html("<?php echo $this->lang->line('sales_amount_tendered'); ?>");
 		$("#amount_tendered:enabled").val("<?php echo to_currency_no_money($amount_due); ?>");
 		$(".giftcard-input").attr('disabled', true);

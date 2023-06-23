@@ -388,6 +388,21 @@ function to_currency_tax($number)
 	}
 }
 
+function to_currency_tax_LBP($number)
+{
+	$config = get_instance()->config;
+
+	if($config->item('tax_included') == '1')
+	{
+		return to_decimals_LBP($number, 'tax_decimals', \NumberFormatter::CURRENCY);
+	}
+	else
+	{
+		return to_decimals_LBP($number, 'currency_decimals', \NumberFormatter::CURRENCY);
+	}
+}
+
+
 function to_tax_decimals($number)
 {
 	// taxes that are NULL, '' or 0 don't need to be displayed
@@ -425,7 +440,9 @@ function to_decimals($number, $decimals = NULL, $type=\NumberFormatter::DECIMAL)
 	}
 	$fmt->setSymbol(\NumberFormatter::CURRENCY_SYMBOL, $config->item('currency_symbol'));
 	
-	console_log($config->item('currency_symbol') );
+	
+	
+	//console_log($config->item('currency_symbol') );
 
 
 	return $fmt->format($number);
@@ -455,7 +472,7 @@ function to_decimals_LBP($number, $decimals = NULL, $type=\NumberFormatter::DECI
 	}
 	$fmt->setSymbol(\NumberFormatter::CURRENCY_SYMBOL, "LBP");
 	
-	console_log($config->item('currency_symbol') );
+	//console_log($config->item('currency_symbol') );
 
 
 	return $fmt->format($number);
