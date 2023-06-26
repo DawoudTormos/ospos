@@ -21,7 +21,7 @@ class Sales extends Secure_Controller
 	{
 		$this->session->set_userdata('allow_temp_items', 1);
 		$this->_reload();//view loaded through this method
-		//The above method is created by developer.It's not native to CI.
+		//The above method "->_reload()" is created by developer.It's not native to CI.
 	}
 
 
