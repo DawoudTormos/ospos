@@ -14,6 +14,17 @@
 <a href="http://translate.opensourcepos.org/engage/opensourcepos/?utm_source=widget" target="_blank"><img src="http://translate.opensourcepos.org/widgets/opensourcepos/-/svg-badge.svg" alt="Translation Status"></a>
 </p>
 
+
+## 👋 Changes outside code
+
+- Created C_sale.php model(not logged in commits here)
+- Created global_variables table in db
+
+
+
+
+
+
 ## 👋 Introduction
 
 Open Source Point of Sale is a web-based point of sale system. The application is written in PHP, it uses MySQL (or MariaDB) as data storage back-end and has a simple but intuitive user interface.
