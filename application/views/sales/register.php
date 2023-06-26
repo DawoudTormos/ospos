@@ -20,6 +20,25 @@ if(isset($success))
 }
 ?>
 
+
+<!---makes second form input in payments hidden when a giftcard is selected  --->
+<style>
+input#amount_tendered_LBP:disabled {
+	display:none;
+}
+
+
+.currency_div{
+	height:35px;
+	text-align:center;
+	display:table-cell;
+	display:flex;
+	align-items:center;
+	justify-content:center;	
+}
+	</style>
+
+
 <div id="register_wrapper">
 
 <!-- Top register controls -->
@@ -598,6 +617,7 @@ if(isset($success))
 								<td><span id="amount_tendered_label"><?php echo $this->lang->line('sales_amount_tendered'); ?></span></td>
 								<td>
 									<?php echo form_input(array('name'=>'amount_tendered', 'id'=>'amount_tendered', 'class'=>'form-control input-sm disabled', 'disabled'=>'disabled', 'value'=>'0', 'size'=>'5', 'tabindex'=>++$tabindex, 'onClick'=>'this.select();')); ?>
+								
 								</td>
 							</tr>
 						</table>
@@ -644,9 +664,13 @@ if(isset($success))
 							<tr>
 								<td><span id="amount_tendered_label"><?php echo $this->lang->line('sales_amount_tendered'); ?></span></td>
 								<td>
-									<?php echo form_input(array('name'=>'amount_tendered', 'id'=>'amount_tendered', 'class'=>'form-control input-sm non-giftcard-input', 'value'=>to_currency_no_money($amount_due), 'size'=>'5', 'tabindex'=>++$tabindex, 'onClick'=>'this.select();')); ?>
+								<?php echo form_input(array('name'=>'amount_tendered', 'id'=>'amount_tendered', 'class'=>'form-control input-sm non-giftcard-input', 'value'=>to_currency_no_money($amount_due), 'size'=>'5', 'tabindex'=>++$tabindex, 'onClick'=>'this.select();' , "oninput"=>"formatInput(this)"  )); ?>
 									<?php echo form_input(array('name'=>'amount_tendered', 'id'=>'amount_tendered', 'class'=>'form-control input-sm giftcard-input', 'disabled' => true, 'value'=>to_currency_no_money($amount_due), 'size'=>'5', 'tabindex'=>++$tabindex)); ?>
+									
+									<?php echo form_input(array('name'=>'amount_tendered_LBP', 'id'=>'amount_tendered_LBP', 'class'=>'form-control input-sm non-giftcard-input', 'value'=>to_currency_no_money($amount_due), 'size'=>'5', 'tabindex'=>++$tabindex , 'onClick'=>'this.select();'  , "oninput"=>"formatInput(this)"   )); ?>
+								
 								</td>
+								<td><div class="currency_div">$$</div><div class="currency_div">LBP</div></td>
 							</tr>
 						</table>
 					<?php echo form_close(); ?>
@@ -809,8 +833,83 @@ if(isset($success))
 
 
 <script type="text/javascript">
+	const dollar_rate = <?php echo $dollar_rate;?>;
+
+	function formatInput(input) {
+  // Remove non-numerical characters except commas
+  let formattedValue = input.value.replace(/[^0-9,.]/g, '');
+
+  // Add thousand commas
+  formattedValue = addThousandCommas(formattedValue);
+
+  // Update the input value with the formatted value
+  input.value = formattedValue;
+}
+
+function addThousandCommas(value) {
+  // Split the value into integer and decimal parts (if any)
+  value = removeCommas(value.toString());
+  let parts = value.split('.');
+  let integerPart = parts[0];
+  let decimalPart = parts[1] ? '.' + parts[1] : '';
+
+  // Add thousand commas to the integer part
+  integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+  // Combine the formatted integer and decimal parts
+  let formattedValue = integerPart + decimalPart;
+
+  return formattedValue;
+}
+
+function removeCommas(x) {
+  // Remove non-numerical characters except commas
+  let formattedValue = x.toString().replace(/[^0-9.]/g, '');
+
+ 
+ return formattedValue ;
+}
+
+	
 $(document).ready(function()
-{
+{	
+
+	//setting the value in LBP after a reload
+	$("input#amount_tendered_LBP").val(addThousandCommas(($("input#amount_tendered").val()*dollar_rate).toFixed(0)))
+
+
+
+
+	//setting the value in dollars after editing the LBP value
+
+	$("input#amount_tendered_LBP").on( "input", function() {
+		var temp = $("input#amount_tendered_LBP").val();
+		
+		if(temp < 10000){
+		$("input#amount_tendered").val(addThousandCommas((removeCommas(temp)/dollar_rate).toFixed(4)))
+		}else{$("input#amount_tendered").val(addThousandCommas((removeCommas(temp)/dollar_rate).toFixed(2)))
+}
+} );
+
+
+
+
+	//setting the value in LBP after editing the dollars value
+
+	$("input#amount_tendered").on( "input", function() {
+		var temp = $("input#amount_tendered").val();
+	
+
+		$("input#amount_tendered_LBP").val(addThousandCommas((removeCommas(temp)*dollar_rate.toFixed(0))))
+
+} );
+
+
+
+
+
+
+
 	const redirect = function() {
 		window.location.href = "<?php echo site_url('sales'); ?>";
 	};
@@ -1012,6 +1111,12 @@ $(document).ready(function()
 			$('#add_payment_form').submit();
 		}
 	});
+	$('#amount_tendered_LBP').keypress(function(event) {
+		if(event.which == 13)
+		{
+			$('#add_payment_form').submit();
+		}
+	});
 
 	$('#finish_sale_button').keypress(function(event) {
 		if(event.which == 13)
@@ -1074,7 +1179,7 @@ function check_payment_type()
 		//
 
 		$("#amount_tendered_label").html("<?php echo $this->lang->line('sales_giftcard_number'); ?>");
-		$("#amount_tendered:enabled").val('').focus();
+		$("#amount_tendered:enabled").focus();
 		$(".giftcard-input").attr('disabled', false);
 		$(".non-giftcard-input").attr('disabled', true);
 		$(".giftcard-input:enabled").val('').focus();
@@ -1089,9 +1194,11 @@ function check_payment_type()
 
 	
 		$("#amount_tendered_label").html("<?php echo $this->lang->line('sales_amount_tendered'); ?>");
-		$("#amount_tendered:enabled").val("<?php echo to_currency_no_money($cash_amount_due); ?>");
+
 		$(".giftcard-input").attr('disabled', true);
 		$(".non-giftcard-input").attr('disabled', false);
+		$("#amount_tendered:enabled").val("<?php echo to_currency_no_money($cash_amount_due); ?>");
+
 	}
 	else
 	{
