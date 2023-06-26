@@ -837,7 +837,7 @@ input#amount_tendered_LBP:disabled {
 
 	function formatInput(input) {
   // Remove non-numerical characters except commas
-  let formattedValue = input.value.replace(/[^0-9,.]/g, '');
+  let formattedValue = input.value.replace(/[^0-9,.-]/g, '');
 
   // Add thousand commas
   formattedValue = addThousandCommas(formattedValue);
@@ -849,6 +849,11 @@ input#amount_tendered_LBP:disabled {
 function addThousandCommas(value) {
   // Split the value into integer and decimal parts (if any)
   value = removeCommas(value.toString());
+  is_negative = false;
+
+  is_negative=(( parseInt(value) < 0)? true : false );
+
+  console.log(is_negative);
   let parts = value.split('.');
   let integerPart = parts[0];
   let decimalPart = parts[1] ? '.' + parts[1] : '';
@@ -864,11 +869,12 @@ function addThousandCommas(value) {
 
 function removeCommas(x) {
   // Remove non-numerical characters except commas
-  let formattedValue = x.toString().replace(/[^0-9.]/g, '');
+  let formattedValue = x.toString().replace(/[^0-9.-]/g, '');
 
  
  return formattedValue ;
 }
+
 
 	
 $(document).ready(function()
@@ -884,10 +890,11 @@ $(document).ready(function()
 
 	$("input#amount_tendered_LBP").on( "input", function() {
 		var temp = $("input#amount_tendered_LBP").val();
+		temp = removeCommas(temp);
 		
-		if(temp < 10000){
-		$("input#amount_tendered").val(addThousandCommas((removeCommas(temp)/dollar_rate).toFixed(4)))
-		}else{$("input#amount_tendered").val(addThousandCommas((removeCommas(temp)/dollar_rate).toFixed(2)))
+		if(temp < 2*dollar_rate){
+		$("input#amount_tendered").val(addThousandCommas((temp/dollar_rate).toFixed(4)))
+		}else{$("input#amount_tendered").val(addThousandCommas((temp/dollar_rate).toFixed(2)))
 }
 } );
 
@@ -898,9 +905,11 @@ $(document).ready(function()
 
 	$("input#amount_tendered").on( "input", function() {
 		var temp = $("input#amount_tendered").val();
+				temp = removeCommas(temp);
+
 	
 
-		$("input#amount_tendered_LBP").val(addThousandCommas((removeCommas(temp)*dollar_rate.toFixed(0))))
+		$("input#amount_tendered_LBP").val(addThousandCommas((temp*dollar_rate).toFixed(0)))
 
 } );
 
