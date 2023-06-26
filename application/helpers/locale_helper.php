@@ -470,7 +470,7 @@ function to_decimals_LBP($number, $decimals = NULL, $type=\NumberFormatter::DECI
 	{
 		$fmt->setAttribute(\NumberFormatter::GROUPING_SEPARATOR_SYMBOL, '');
 	}
-	$fmt->setSymbol(\NumberFormatter::CURRENCY_SYMBOL, "LBP");
+	$fmt->setSymbol(\NumberFormatter::CURRENCY_SYMBOL, get_instance()->lang->line('LBP_currency'));
 	
 	//console_log($config->item('currency_symbol') );
 

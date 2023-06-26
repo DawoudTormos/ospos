@@ -670,7 +670,7 @@ input#amount_tendered_LBP:disabled {
 									<?php echo form_input(array('name'=>'amount_tendered_LBP', 'id'=>'amount_tendered_LBP', 'class'=>'form-control input-sm non-giftcard-input', 'value'=>to_currency_no_money($amount_due), 'size'=>'5', 'tabindex'=>++$tabindex , 'onClick'=>'this.select();'  , "oninput"=>"formatInput(this)"   )); ?>
 								
 								</td>
-								<td><div class="currency_div">$$</div><div class="currency_div">LBP</div></td>
+								<td><div class="currency_div">$$</div><div class="currency_div"><?php echo $this->lang->line('LBP_currency'); ?></div></td>
 							</tr>
 						</table>
 					<?php echo form_close(); ?>
