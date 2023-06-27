@@ -36,6 +36,60 @@ input#amount_tendered_LBP:disabled {
 	align-items:center;
 	justify-content:center;	
 }
+
+.custom-tooltip ,.custom-tooltip2 {
+  position: relative;
+  /*display: inline-block;*/
+  /* Additional styles for the element */
+}
+
+.custom-tooltip::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: -20px; /* Adjust as needed */
+  left: 35%;
+  background-color: #333;
+  color: #fff;
+  padding: 7px 13px;
+  border-radius: 4px;
+  font-size:15px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+.custom-tooltip:hover::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+
+
+
+
+.custom-tooltip2::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: -15%; /* Adjust as needed */
+  left: 115%;
+  background-color: #333;
+  color: #fff;
+  padding: 7px 13px;
+  border-radius: 4px;
+  font-size:15px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+.custom-tooltip2:hover::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+
 	</style>
 
 
@@ -204,7 +258,7 @@ input#amount_tendered_LBP:disabled {
 							{
 							?>
 								<!---item number in cart cell -->
-								<td><?php echo $item['item_number'] ; ?></td>
+								<td class="custom-tooltip" data-tooltip="<?php if($items_module_allowed && $change_price/*permission to change price*/){echo to_currency($item['cost_price']) ;} ?>" ><?php echo $item['item_number'] ; ?></td>
 								<td style="align: center;">
 									<?php echo $item['name'] . ' '. implode(' ', array($item['attribute_values'], $item['attribute_dtvalues'])); ?>
 									<br/>
@@ -214,11 +268,11 @@ input#amount_tendered_LBP:disabled {
 							}
 							?>
 
-							<td id="unit_price_<?php echo $item['item_number'] ?>">
+							<td id="unit_price_<?php echo $item['item_number']?>" class="custom-tooltip">
 								<?php
 								if($items_module_allowed && $change_price/*permission to change price*/)
 								{
-									echo form_input(array('name'=>'price', 'class'=>'form-control input-sm', 'value'=>to_currency_no_money($item['price']), 'tabindex'=>++$tabindex, 'onClick'=>'this.select();'));
+									echo form_input(array('name'=>'price', 'class'=>'form-control input-sm custom-tooltip', 'value'=>to_currency_no_money($item['price']), 'tabindex'=>++$tabindex, 'onClick'=>'this.select();'));
 									
 									
 									/*$details = new ReflectionFunction('to_currency');
@@ -232,7 +286,7 @@ input#amount_tendered_LBP:disabled {
 									//to get title effect with dollar price
 									echo "<script>$('#unit_price_";
 									echo  $item['item_number'];
-									echo "').attr('title', '";
+									echo "').attr('data-tooltip', '";
 									echo to_currency($item['price']);
 
 									echo "');</script>" ;
@@ -271,7 +325,7 @@ input#amount_tendered_LBP:disabled {
 								</div>
 							</td>
 
-							<td id="discounted_total_<?php echo $item['item_number'] ?>">
+							<td id="discounted_total_<?php echo $item['item_number'] ?>" class="custom-tooltip">
 								<?php
 								if($item['item_type'] == ITEM_AMOUNT_ENTRY)
 								{
@@ -286,7 +340,7 @@ input#amount_tendered_LBP:disabled {
 									//to get title effect with dollar price
 									echo "<script>$('#discounted_total_";
 									echo  $item['item_number'];
-									echo "').attr('title', '";
+									echo "').attr('data-tooltip', '";
 									echo to_currency($item['discounted_total']);
 
 									echo "');</script>" ;
@@ -518,10 +572,10 @@ input#amount_tendered_LBP:disabled {
 			</tr>
 			<tr>
 				<th style="width: 55%;"><?php echo $this->lang->line('sales_sub_total'); ?></th>
-				<th id="sub_total" style="width: 45%; text-align: right;"><?php echo to_currency_LBP($subtotal * $dollar_rate); ?></th>
+				<th id="sub_total" class=" custom-tooltip2"  style="width: 45%; text-align: right;"><?php echo to_currency_LBP($subtotal * $dollar_rate); ?></th>
 <?php
 				//to get title effect with dollar price
-									echo "<script>$('#sub_total').attr('title', '";
+									echo "<script>$('#sub_total').attr('data-tooltip', '";
 									echo to_currency($subtotal);
 
 									echo "');</script>" ;
@@ -535,11 +589,11 @@ input#amount_tendered_LBP:disabled {
 			?>
 				<tr>
 					<th style="width: 55%;"><?php echo (float)$tax['tax_rate'] . '% ' . $tax['tax_group']; ?></th>
-					<th id="sale_tax_amount" style="width: 45%; text-align: right;"><?php echo to_currency_tax_LBP($tax['sale_tax_amount'] * $dollar_rate); ?></th>
+					<th id="sale_tax_amount" class="custom-tooltip2" style="width: 45%; text-align: right;"><?php echo to_currency_tax_LBP($tax['sale_tax_amount'] * $dollar_rate); ?></th>
 
 					<?php
 				//to get title effect with dollar price
-									echo "<script>$('#sale_tax_amount').attr('title', '";
+									echo "<script>$('#sale_tax_amount').attr('data-tooltip', '";
 									echo to_currency_tax($tax['sale_tax_amount']);
 
 									echo "');</script>" ;
@@ -553,12 +607,12 @@ input#amount_tendered_LBP:disabled {
 
 			<tr>
 				<th style="width: 55%; font-size: 150%"><?php echo $this->lang->line('sales_total'); ?></th>
-				<th  style="width: 45%; font-size: 150%; text-align: right;"><span id="sale_total"><?php echo to_currency_LBP($total*$dollar_rate); ?></span></th>
+				<th  style="width: 45%; font-size: 150%; text-align: right;"><span class="custom-tooltip2" id="sale_total"><?php echo to_currency_LBP($total*$dollar_rate); ?></span></th>
 
 
 				<?php
 				//to get title effect with dollar price
-									echo "<script>$('#sale_total').attr('title', '";
+									echo "<script>$('#sale_total').attr('data-tooltip', '";
 									echo to_currency($total);
 
 									echo "');</script>" ;
@@ -574,11 +628,11 @@ input#amount_tendered_LBP:disabled {
 			<table class="sales_table_100" id="payment_totals">
 				<tr>
 					<th style="width: 55%;"><?php echo $this->lang->line('sales_payments_total'); ?></th>
-					<th id="payments_total" style="width: 45%; text-align: right;"><?php echo to_currency_LBP($payments_total*$dollar_rate); ?></th>
+					<th id="payments_total" class="custom-tooltip2" style="width: 45%; text-align: right;"><?php echo to_currency_LBP($payments_total*$dollar_rate); ?></th>
 
 					<?php
 				//to get title effect with dollar price
-									echo "<script>$('#payments_total').attr('title', '";
+									echo "<script>$('#payments_total').attr('data-tooltip', '";
 									echo to_currency($payments_total);
 
 									echo "');</script>" ;
@@ -587,11 +641,11 @@ input#amount_tendered_LBP:disabled {
 				</tr>
 				<tr>
 					<th style="width: 55%; font-size: 120%"><?php echo $this->lang->line('sales_amount_due'); ?></th>
-					<th style="width: 45%; font-size: 120%; text-align: right;"><span id="sale_amount_due"><?php echo to_currency_LBP($amount_due*$dollar_rate); ?></span></th>
+					<th style="width: 45%; font-size: 120%; text-align: right;"><span class=" custom-tooltip2" id="sale_amount_due"><?php echo to_currency_LBP($amount_due*$dollar_rate); ?></span></th>
 
 					<?php
 				//to get title effect with dollar price
-									echo "<script>$('#sale_amount_due').attr('title', '";
+									echo "<script>$('#sale_amount_due').attr('data-tooltip', '";
 									echo to_currency($amount_due);
 
 									echo "');</script>" ;

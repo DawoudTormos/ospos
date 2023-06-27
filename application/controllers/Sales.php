@@ -14,6 +14,8 @@ class Sales extends Secure_Controller
 		$this->load->library('token_lib');
 		$this->load->library('barcode_lib');
 		$this->load->model("Attribute");
+		$this->load->model("C_sale");
+
 
 	}
 
@@ -1264,6 +1266,11 @@ class Sales extends Secure_Controller
 		}
 
 		$data = $this->xss_clean($data);
+
+		/*echo"<pre>";
+		print_r($data);
+		echo"</pre>";*/
+
 
 		$this->load->view("sales/register", $data);
 	}
