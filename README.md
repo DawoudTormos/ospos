@@ -1,3 +1,7 @@
+## Editing an open source project 
+link:  https://github.com/opensourcepos/opensourcepos
+
+
 <p align="center"><img src="branding/emblem.svg" alt="Open Source Point of Sale Logo" width="auto" height="200"></p>
 <h3 align="center">Open Source Point of Sale</h3>
 
